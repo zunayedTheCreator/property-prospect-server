@@ -42,6 +42,12 @@ async function run() {
         res.send(result);
     })
 
+    app.post('/review', async(req, res) => {
+        const review = req.body;
+        const result = await reviewCollection.insertOne(review);
+        res.send(result)
+    })
+
     // ----- Properties API -----
     app.get('/property', async(req, res) => {
         const result = await propertyCollection.find().toArray();
