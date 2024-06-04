@@ -29,6 +29,7 @@ async function run() {
     const advertisementCollection = client.db('propertyDB').collection('advertisements');
     const reviewCollection = client.db('propertyDB').collection('reviews');
     const propertyCollection = client.db('propertyDB').collection('properties');
+    const wishlistCollection = client.db('propertyDB').collection('wishlists');
 
     // ----- Advertisements API -----
     app.get('/advertisement', async(req, res) => {
@@ -66,6 +67,12 @@ async function run() {
         const query = { _id: new ObjectId(id) }
         const result = await propertyCollection.findOne(query)
         res.send(result)
+    })
+
+    // ----- WishLists API -----
+    app.get('/wishlist', async(req, res) => {
+        const result = await propertyCollection.find().toArray();
+        res.send(result);
     })
 
 
