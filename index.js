@@ -48,6 +48,13 @@ async function run() {
         res.send(result)
     })
 
+    app.delete('/review/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await reviewCollection.deleteOne(query)
+        res.send(result)
+    })
+
     // ----- Properties API -----
     app.get('/property', async(req, res) => {
         const result = await propertyCollection.find().toArray();
