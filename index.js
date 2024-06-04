@@ -71,8 +71,14 @@ async function run() {
 
     // ----- WishLists API -----
     app.get('/wishlist', async(req, res) => {
-        const result = await propertyCollection.find().toArray();
+        const result = await wishlistCollection.find().toArray();
         res.send(result);
+    })
+
+    app.post('/wishlist', async(req, res) => {
+        const property = req.body;
+        const result = await wishlistCollection.insertOne(property);
+        res.send(result)
     })
 
 
