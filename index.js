@@ -26,11 +26,24 @@ async function run() {
     await client.connect();
 
 
+    const userCollection = client.db('propertyDB').collection('users');
     const advertisementCollection = client.db('propertyDB').collection('advertisements');
     const reviewCollection = client.db('propertyDB').collection('reviews');
     const propertyCollection = client.db('propertyDB').collection('properties');
     const wishlistCollection = client.db('propertyDB').collection('wishlists');
     const broughtPropertyCollection = client.db('propertyDB').collection('broughtProperties');
+
+    // ----- Users API -----
+    app.get('/user', async(req, res) => {
+        const result = await userCollection.find().toArray();
+        res.send(result);
+    })
+
+    app.post('/user', async(req, res) => {
+        const review = req.body;
+        const result = await userCollection.insertOne(review);
+        res.send(result)
+    })
 
     // ----- Advertisements API -----
     app.get('/advertisement', async(req, res) => {
