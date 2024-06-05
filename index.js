@@ -74,6 +74,13 @@ async function run() {
         const result = await wishlistCollection.find().toArray();
         res.send(result);
     })
+    
+    app.get('/wishlist/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await wishlistCollection.findOne(query)
+        res.send(result)
+    })
 
     app.post('/wishlist', async(req, res) => {
         const property = req.body;
