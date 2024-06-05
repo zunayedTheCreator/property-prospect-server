@@ -40,8 +40,20 @@ async function run() {
     })
 
     app.post('/user', async(req, res) => {
-        const review = req.body;
-        const result = await userCollection.insertOne(review);
+        const user = req.body;
+        const query = {email: user.email}
+        const existingUser = await userCollection.findOne(query);
+        if (existingUser) {
+          return res.send({ message: 'user already exist', insertedId: null})
+        }
+        const result = await userCollection.insertOne(user);
+        res.send(result)
+    })
+
+    app.delete('/user/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await userCollection.deleteOne(query)
         res.send(result)
     })
 
