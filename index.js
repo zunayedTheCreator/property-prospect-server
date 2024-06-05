@@ -30,6 +30,7 @@ async function run() {
     const reviewCollection = client.db('propertyDB').collection('reviews');
     const propertyCollection = client.db('propertyDB').collection('properties');
     const wishlistCollection = client.db('propertyDB').collection('wishlists');
+    const broughtPropertyCollection = client.db('propertyDB').collection('broughtProperties');
 
     // ----- Advertisements API -----
     app.get('/advertisement', async(req, res) => {
@@ -92,6 +93,18 @@ async function run() {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) }
         const result = await wishlistCollection.deleteOne(query)
+        res.send(result)
+    })
+    
+    // ----- WishLists API -----
+    app.get('/brought-property', async(req, res) => {
+        const result = await broughtPropertyCollection.find().toArray();
+        res.send(result);
+    })
+
+    app.post('/brought-property', async(req, res) => {
+        const property = req.body;
+        const result = await broughtPropertyCollection.insertOne(property);
         res.send(result)
     })
 
