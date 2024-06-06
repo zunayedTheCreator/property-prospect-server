@@ -202,6 +202,13 @@ async function run() {
         res.send(result)
     })
 
+    app.get('/property/normal/:email', verifyToken, verifyAgent, async (req, res) => {
+      const email = req.params.email;
+      const query = {agent_email: email}
+      const properties = await propertyCollection.find(query).toArray();
+      res.send(properties)
+    })
+
     app.post('/property', verifyToken, verifyAgent, async(req, res) => {
         const property = req.body;
         const result = await propertyCollection.insertOne(property);
