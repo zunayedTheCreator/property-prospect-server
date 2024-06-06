@@ -267,10 +267,17 @@ async function run() {
         res.send(result)
     })
     
-    // ----- WishLists API -----
+    // ----- Brought Property API -----
     app.get('/brought-property', async(req, res) => {
         const result = await broughtPropertyCollection.find().toArray();
         res.send(result);
+    })
+
+    app.get('/brought-property/normal/:email', verifyToken, verifyAgent, async (req, res) => {
+      const email = req.params.email;
+      const query = {agent_email: email}
+      const properties = await broughtPropertyCollection.find(query).toArray();
+      res.send(properties)
     })
 
     app.post('/brought-property', async(req, res) => {
