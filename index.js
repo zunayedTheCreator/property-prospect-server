@@ -215,6 +215,25 @@ async function run() {
         res.send(result)
     })
 
+    app.patch('/property/:id', verifyToken, verifyAgent, async (req, res) => {
+      const item = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          property_title: item.property_title,
+          property_location: item.property_location,
+          property_image: item.property_image,
+          agent_name: item.agent_name,
+          agent_email: item.agent_email,
+          price_range: item.price_range,
+          description: item.description,
+        }
+      }
+      const result = await propertyCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
     app.delete('/property/:id',verifyToken, verifyAgent, async(req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) }
