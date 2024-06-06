@@ -202,6 +202,12 @@ async function run() {
         res.send(result)
     })
 
+    app.post('/property', verifyToken, verifyAgent, async(req, res) => {
+        const property = req.body;
+        const result = await propertyCollection.insertOne(property);
+        res.send(result)
+    })
+
     // ----- WishLists API -----
     app.get('/wishlist', async(req, res) => {
         const result = await wishlistCollection.find().toArray();
