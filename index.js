@@ -286,6 +286,30 @@ async function run() {
         res.send(result)
     })
 
+    app.patch('/brought-property/accepted/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          status: 'Accepted'
+        }
+      }
+      const result = await broughtPropertyCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
+    app.patch('/brought-property/rejected/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          status: 'Rejected'
+        }
+      }
+      const result = await broughtPropertyCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
