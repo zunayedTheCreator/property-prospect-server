@@ -215,6 +215,13 @@ async function run() {
         res.send(result)
     })
 
+    app.delete('/property/:id',verifyToken, verifyAgent, async(req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await propertyCollection.deleteOne(query)
+        res.send(result)
+    })
+
     // ----- WishLists API -----
     app.get('/wishlist', async(req, res) => {
         const result = await wishlistCollection.find().toArray();
