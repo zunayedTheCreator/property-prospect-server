@@ -280,25 +280,44 @@ async function run() {
       res.send(properties)
     })
 
-    app.post('/brought-property', async(req, res) => {
+    app.post('/brought-property', verifyToken, async(req, res) => {
         const property = req.body;
         const result = await broughtPropertyCollection.insertOne(property);
         res.send(result)
     })
 
-    app.patch('/brought-property/accepted/:id', async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: new ObjectId(id) };
-      const updatedDoc = {
-        $set: {
-          status: 'Accepted'
-        }
-      }
-      const result = await broughtPropertyCollection.updateOne(filter, updatedDoc);
-      res.send(result)
-    })
+    app.patch('/brought-property/accepted/:id/:main_id', verifyToken, verifyAgent, async (req, res) => {
+        const id = req.params.id;
+        const main_id = req.params.main_id;
 
-    app.patch('/brought-property/rejected/:id', async (req, res) => {
+        const rejectFilter = { 
+            main_id: main_id, 
+            _id: { $ne: new ObjectId(id) } 
+        };
+        const rejectUpdate = {
+            $set: {
+                status: 'Rejected'
+            }
+        };
+
+        const acceptFilter = { _id: new ObjectId(id) };
+        const acceptUpdate = {
+            $set: {
+                status: 'Accepted'
+            }
+        };
+    
+        try {
+            const rejectResult = await broughtPropertyCollection.updateMany(rejectFilter, rejectUpdate);
+            const acceptResult = await broughtPropertyCollection.updateOne(acceptFilter, acceptUpdate);
+            res.send({ rejectResult, acceptResult });
+        } catch (error) {
+            console.error('Error occurred:', error);
+            res.status(500).send({ message: 'An error occurred while updating the documents' });
+        }
+    });
+
+    app.patch('/brought-property/rejected/:id', verifyToken, verifyAgent, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const updatedDoc = {
