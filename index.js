@@ -337,6 +337,32 @@ async function run() {
       res.send(result)
     })
 
+    app.patch('/brought-property/rejected/:id', verifyToken, verifyAgent, async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          status: 'Rejected'
+        }
+      }
+      const result = await broughtPropertyCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
+    app.patch('/brought-property/bought/:id', verifyToken, async (req, res) => {
+      const item = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          status: 'Bought',
+          transition_id: item.transition_id
+        }
+      }
+      const result = await broughtPropertyCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
     // ----- Payment Intent -----
     app.post('/create-payment-intent', async (req, res) => {
       const { price } = req.body;
