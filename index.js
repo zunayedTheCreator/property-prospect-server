@@ -183,6 +183,13 @@ async function run() {
         res.send(result);
     })
 
+    app.post('/advertisement', verifyToken, verifyAdmin, async(req, res) => {
+        const property = req.body;
+        const result = await advertisementCollection.insertOne(property);
+        res.send(result)
+    })
+
+
     // ----- Reviews API -----
     app.get('/review', async(req, res) => {
         const result = await reviewCollection.find().toArray();
@@ -207,6 +214,13 @@ async function run() {
         const result = await propertyCollection.find().toArray();
         res.send(result);
     })
+
+    app.get('/property/search/:identifier', verifyToken, async (req, res) => {
+        const { identifier } = req.params;
+        const query = { property_location: new RegExp(identifier, 'i') };
+        const result = await propertyCollection.find(query).toArray();
+        res.send(result);
+    });
 
     app.get('/property/:id', async(req, res) => {
         const id = req.params.id;
