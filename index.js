@@ -413,6 +413,20 @@ async function run() {
       res.send(result)
     })
 
+    app.delete('/brought-property/fraud/:agent_email', verifyToken, verifyAdmin, async (req, res) => {
+        const agent_email = req.params.agent_email;
+    
+        const query = { agent_email: agent_email };
+    
+        try {
+            const result = await broughtPropertyCollection.deleteMany(query);
+            res.send(result);
+        } catch (error) {
+            console.error('Error occurred:', error);
+            res.status(500).send({ message: 'An error occurred while deleting the documents' });
+        }
+    });
+
     // ----- Payment Intent -----
     app.post('/create-payment-intent', async (req, res) => {
       const { price } = req.body;
