@@ -81,7 +81,7 @@ async function run() {
     }
 
     // ----- Users API -----
-    app.get('/user', verifyToken, verifyAdmin, async(req, res) => {
+    app.get('/user', verifyToken, async(req, res) => {
         const result = await userCollection.find().toArray();
         res.send(result);
     })
@@ -134,7 +134,7 @@ async function run() {
         res.send(result)
     })
 
-    app.patch('/user/admin/:id', async (req, res) => {
+    app.patch('/user/admin/:id',verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const updatedDoc = {
@@ -146,7 +146,7 @@ async function run() {
       res.send(result)
     })
 
-    app.patch('/user/agent/:id', async (req, res) => {
+    app.patch('/user/agent/:id', verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const updatedDoc = {
@@ -158,7 +158,19 @@ async function run() {
       res.send(result)
     })
 
-    app.delete('/user/:id', async(req, res) => {
+    app.patch('/user/fraud/:id', verifyToken, verifyAdmin, async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          status: 'fraud'
+        }
+      }
+      const result = await userCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
+    app.delete('/user/:id', verifyToken, verifyAdmin, async(req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) }
         const result = await userCollection.deleteOne(query)
@@ -265,6 +277,20 @@ async function run() {
         const result = await propertyCollection.deleteOne(query)
         res.send(result)
     })
+
+    app.delete('/property/fraud/:agent_email', verifyToken, verifyAdmin, async (req, res) => {
+        const agent_email = req.params.agent_email;
+    
+        const query = { agent_email: agent_email };
+    
+        try {
+            const result = await propertyCollection.deleteMany(query);
+            res.send(result);
+        } catch (error) {
+            console.error('Error occurred:', error);
+            res.status(500).send({ message: 'An error occurred while deleting the documents' });
+        }
+    });
 
     // ----- WishLists API -----
     app.get('/wishlist', async(req, res) => {
